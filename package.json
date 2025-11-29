@@ -9,7 +9,7 @@
   "scripts": {
     "backend:start": "NODE_ENV=production && bun apps/backend/src/index.ts",
     "backend:dev": "NODE_ENV=development && bun --watch apps/backend/src/index.ts",
-    "backend:build": "echo \"NO_COMMAND\" && exit 1;",
+    "backend:build": "bun build --compile --minify-whitespace --minify-syntax --target bun --outfile dist/server apps/backend/src/index.ts",
     "frontend:start": "cd apps/frontend && nuxt start",
     "frontend:dev": "bun --cwd=apps/frontend nuxt dev",
     "frontend:build": "cd apps/frontend && nuxt build",
