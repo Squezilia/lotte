@@ -1,0 +1,26 @@
+import tailwindcss from '@tailwindcss/vite';
+import { nodePolyfills } from 'vite-plugin-node-polyfills';
+
+// https://nuxt.com/docs/api/configuration/nuxt-config
+export default defineNuxtConfig({
+  compatibilityDate: '2025-07-15',
+  devtools: { enabled: true },
+
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/fonts',
+    '@nuxt/hints',
+    '@nuxt/image',
+    'shadcn-nuxt',
+  ],
+
+  css: ['~/assets/css/tailwind.css'],
+  vite: {
+    plugins: [
+      tailwindcss(),
+      nodePolyfills({
+        include: ['path'],
+      }),
+    ],
+  },
+});

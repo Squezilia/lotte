@@ -1,120 +1,68 @@
-# Lena Monorepo
+# Basit QR Kartvizit
 
-Lena is a small, opinionated monorepo boilerplate built around:
+Stateless, auth ve admin yönetimi gerektirmeyen basit bir kartvizit sitesi.
 
-- Bun + Elysia for the backend
-- Nuxt 4 for the frontend
-- Shared packages for database access and runtime configuration
+## Ne Yapar, Ne Yapmaz
 
-This repo is intended as a starting point for full‑stack apps with a clear separation between app code and infrastructure (database, config, tooling).
+Bu proje şunları yapar;
 
-## Monorepo Layout
+- Linklerinizi, hızlıca paylaşmak istediğiniz bilgilerinizi kolayca barındırmanızı sağlar.
+- CMS, Veritabanı gibi şeylerle uğraşmamanızı sağlar.
+- Postgres dışında bir bağımlılığı olmadığından hızlıca ve kolayca host etmenizi sağlar.
+- Stateless olduğundan neredeyse bir Raspberry Pi Zero'da host edilebilir.
 
-- `apps/backend` – Bun/Elysia HTTP API with Swagger docs
-- `apps/frontend` – Nuxt 4 app
-- `packages/database` – Prisma schema and client wrapper (`@lena/database`)
-- `packages/config` – Centralized TypeScript + ESLint configs and runtime config (`@lena/config`)
+Bu proje şunları yapmaz;
 
-The root `package.json` uses workspaces to tie everything together.
+- Multi-tenant bir Link uygulaması sunmaz.
+- URL Shortener değildir.
+- 255'den fazla linki barındıramaz.
+- Dosya veya resim servis edemez.
 
-## Backend (`apps/backend`)
+## Proje
 
-- Runtime: Bun
-- Framework: Elysia
-- Plugins:
-  - `@elysiajs/swagger` – Swagger/OpenAPI UI
+### Gereksinimler
 
-Features:
+- PostgreSQL Sunucusu. (Local bir sunucu, Neon PostgreSQL veya Supabase PostgreSQL kullanabilirsiniz.)
+- Bun Runtime
 
-- `GET /` – returns `Hello Lena!!`
-- Swagger documentation is served via the Swagger plugin.
+### Kurulum
 
-Development:
+1. `.env.example` dosyasını `.env` olacak şekilde yeniden adlandırın ve içerisindeki değerleri uygun bir şekilde ayarlayın.
+2. `bun install` komutuyla bağımlılıkları indirin.
 
-```bash
-# from repo root
-bun install
-bun run backend:dev
-```
-
-The backend listens on `http://localhost:3000`.
-
-## Frontend (`apps/frontend`)
-
-- Framework: Nuxt 4
-- Language: TypeScript
-- Extras: Nuxt ESLint module, fonts, hints, image module
-
-TypeScript is configured through Nuxt’s `typescript.tsConfig` option and extends the shared base config in `packages/config`. Nuxt-style aliases (`#app`, `#components`, `#pages`, etc.) are also wired there.
-
-Development:
+### Package Reference
 
 ```bash
-# from repo root
-bun install
-bun run frontend:dev
+bun run start # Projeyi önizleme olarak başlatır.
+bun run dev # Projeyi geliştirme modunda başlatır.
+bun run build # Projeyi derler.
+bun run database:generate # Veritabanı clientini derler.
+bun run database:push # Veritabanı şemasını uygular.
+bun run database:pull # Veritabanı şemasını çeker.
+bun run lint # Linterı çalıştırır.
 ```
 
-The dev server will start on the port configured by Nuxt (typically `http://localhost:3000`, if not occupied by the backend).
+## Teknik Açıklama
 
-## Packages
+Bu projenin teknik açıklamasını yapmadan önce şu soruyu cevaplandırmamız gerek; "Neden mimariyi böyle bir şey yaptım?". Neden, çünkü;
 
-### `@lena/database` (`packages/database`)
+- Auth, session handling ve CMS sistemleriyle uğraşmak istemedim.
+- Projenin yapısını büyütmek istemedim.
+- İhtiyacım kadar olan teknik borç çıkartmaya çalıştım.
 
-- Holds the Prisma schema (`packages/database/prisma/schema.prisma`).
-- Exposes a typed Prisma client and helper:
-  - `prisma` – shared `PrismaClient` instance
-  - `connectDatabase()` – helper to connect on startup
+Sorunun cevabını verdiysek devam edelim. Bu projeni en temeldeki kaynağı "Link" içinde güvenlik amacıyla kendi kendini doğrulayan bir signature (imza) barındırır. Bu imza kullanıcının belirlediği bir PIN ile SHA256-HMAC kullanarak oluşturulur.
 
-This keeps all database concerns out of the backend app itself.
+İmzalama bir zincir halinde gerçekleşir. Başta hiçbir şeyi olmayan sistem varsayılan bir PIN ile gelir, bu PIN sayesinde ilk kaynağını elde ettikten sonra oluşturulucak yeni kaynaklar ancak kullanıcının önceki kaynaklardan birinin imzasını doğrulamasıyla oluşturulabilir.
 
-### `@lena/config` (`packages/config`)
+Bu sistemin mevcut PIN'i unutmaması için en az 1 geçerli imza bulundurması gerekir, bu yüzden son kaynak silinse dahi sistem bunu kullanıcıya göstermez.
 
-- Central place for:
-  - Shared TypeScript base config (`tsconfig.base.json`)
-  - Shared ESLint config (`eslint.config.mjs`)
-  - Simple runtime configuration (`src/index.ts`)
+Bu mimari tercihin iyi yanları;
 
-Apps and other packages extend these configs instead of defining their own from scratch.
+- Hafif olması, doğrulama ve kaynak oluşturmak için çok az adım gerektirmesi.
+- Kolay bir şekilde güvenli olması.
+- Stateless olması.
 
-## Scripts (root)
+Bu mimari tercihin kötü yanları;
 
-From the repo root:
-
-- `bun run backend:dev` – start backend in watch mode
-- `bun run backend:start` – start backend with `NODE_ENV=production`
-- `bun run backend:build` – placeholder (no build step yet)
-- `bun run frontend:dev` – start Nuxt dev server
-- `bun run frontend:start` – start built Nuxt app
-- `bun run frontend:build` – build frontend for production
-- `bun run database:generate` – run `prisma generate` using `packages/database/prisma/schema.prisma`
-- `bun run database:push` – push Prisma schema to the database
-- `bun run database:pull` – introspect database into Prisma schema
-- `bun run lint` – run ESLint using the shared config in `@lena/config`
-
-## Getting Started
-
-1. Install dependencies:
-
-   ```bash
-   bun install
-   ```
-
-2. Set up your environment:
-
-   - Create `.env` with any vars you need, especially `DATABASE_URL` for Prisma in `@lena/database`.
-
-3. (Optional) Sync the database schema:
-
-   ```bash
-   bun run database:push
-   ```
-
-4. Run backend and/or frontend:
-
-   ```bash
-   bun run backend:dev
-   bun run frontend:dev
-   ```
-
-You can now iterate on backend, frontend, and shared packages within a single monorepo, with all tooling and config centralized in `@lena/config`. 
+- Her kaynağın kendi kendini doğrulaması sebebiyle veritabanından doğrudan bir düzenleme yapamazsınız. Kaynağın verilerinden birisinin değişmesi halinde imza doğrulanamaz ve bu sebepten dolayı kaynak ile ilgili işlemler sonsuza kadar kitlenir.
+- Sistemde bir PIN değişikliğine gidileceği zaman her kaynağın kendi imzasının yeniden oluşturulması gerekir.
