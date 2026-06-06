@@ -1,68 +1,130 @@
-# Basit QR Kartvizit
+# Lotte
 
-Stateless, auth ve admin yönetimi gerektirmeyen basit bir kartvizit sitesi.
+Nuxt ile geliştirilmiş, kendi sunucunda çalıştırabileceğin hafif bir dijital kartvizit uygulaması.
 
-## Ne Yapar, Ne Yapmaz
+Lotte basit bir fikir üzerine kuruldu:
 
-Bu proje şunları yapar;
+> Küçük değişiklikler için koca koca yönetim panellerine ne gerek var?
 
-- Linklerinizi, hızlıca paylaşmak istediğiniz bilgilerinizi kolayca barındırmanızı sağlar.
-- CMS, Veritabanı gibi şeylerle uğraşmamanızı sağlar.
-- Postgres dışında bir bağımlılığı olmadığından hızlıca ve kolayca host etmenizi sağlar.
-- Stateless olduğundan neredeyse bir Raspberry Pi Zero'da host edilebilir.
+Bu yüzden hesap sistemi, oturum (session), JWT veya OAuth yerine 6 haneli bir ana PIN ile çalışan imza (signature) tabanlı bir doğrulama mekanizması kullanır.
 
-Bu proje şunları yapmaz;
+---
 
-- Multi-tenant bir Link uygulaması sunmaz.
-- URL Shortener değildir.
-- 255'den fazla linki barındıramaz.
-- Dosya veya resim servis edemez.
+## ✨ Özellikler
 
-## Proje
+- Minimal ve mobil odaklı arayüz
+- Kendi sunucunda çalıştırabilme
+- Serverless uyumlu yapı
+- Bağlantı yönetimi
+- İmza tabanlı içerik doğrulama
+- Vercel, Netlify ve Cloudflare üzerinde çalıştırılabilir
 
-### Gereksinimler
+---
 
-- PostgreSQL Sunucusu. (Local bir sunucu, Neon PostgreSQL veya Supabase PostgreSQL kullanabilirsiniz.)
-- Bun Runtime
+## ✅ Ne Yapar / ❌ Ne Yapmaz
 
-### Kurulum
+### Yapar
 
-1. `.env.example` dosyasını `.env` olacak şekilde yeniden adlandırın ve içerisindeki değerleri uygun bir şekilde ayarlayın.
-2. `bun install` komutuyla bağımlılıkları indirin.
+- Dijital kartvizit bilgilerini görüntüler.
+- Profil ve bağlantıları güncelleyebilir.
+- İçerik değişikliklerini 6 haneli PIN ile doğrular.
+- Kullanıcı hesabı oluşturmadan sahiplik kontrolü sağlar.
+- Tek kullanıcı odaklı, basit bir yönetim deneyimi sunar.
 
-### Package Reference
+### Yapmaz
+
+- Çok kullanıcılı bir sistem değildir.
+- Kayıt olma veya giriş yapma ekranı içermez.
+- Session, JWT veya OAuth kullanmaz.
+- Rol ve yetki yönetimi sunmaz.
+- Yönetim paneli veya kapsamlı bir CMS olmayı hedeflemez.
+
+---
+
+## 🔐 Güvenlik Modeli
+
+Lotte geleneksel bir kimlik doğrulama sistemi kullanmaz.
+
+Her kurulumda kaynakları doğrulamak amacıyla **6 haneli bir Master PIN** kullanılır.
+
+Veritabanında saklanan her kayıt, HMAC-SHA256 algoritması ile imzalanır.
+
+- **Anahtar (Key):** Master PIN
+- **Mesaj (Message):** Kaynağın içeriği
+
+Bir kayıt güncellenirken veya silinirken:
+
+1. İstemci mevcut PIN'i gönderir.
+2. Sunucu kayıt üzerindeki imzayı doğrular.
+3. Doğrulama başarılıysa işlem gerçekleştirilir.
+4. Güncellenen içerik için yeni bir imza oluşturulur.
+
+Bu sayede herhangi bir oturum veya kullanıcı bilgisi saklanmadan içerik sahipliği doğrulanabilir.
+
+---
+
+## ⚠ Özel Durumlar
+
+### Boş Veritabanı
+
+İlk kurulumda doğrulanabilecek herhangi bir kayıt bulunmadığından, `NUXT_DEFAULT_SIGNATURE_PIN` değişkeni başlangıç PIN'i olarak kullanılır.
+
+İlk kayıt oluşturulduktan sonra bu PIN artık kullanılmaz.
+
+### Son Kaydın Silinmesi
+
+İmza zincirinin korunabilmesi için sistem veritabanında her zaman görünmeyen dahili bir kayıt tutar.
+
+Bu kayıt API üzerinden erişilebilir değildir ve yeni bir kayıt oluşturulana dek imza zincirini korumak için devam eder.
+
+---
+
+## 🚀 Kurulum
+
+Projeyi klonlayın:
 
 ```bash
-bun run start # Projeyi önizleme olarak başlatır.
-bun run dev # Projeyi geliştirme modunda başlatır.
-bun run build # Projeyi derler.
-bun run database:generate # Veritabanı clientini derler.
-bun run database:push # Veritabanı şemasını uygular.
-bun run database:pull # Veritabanı şemasını çeker.
-bun run lint # Linterı çalıştırır.
+git clone https://github.com/squezilia/lotte.git
+
+cd lotte
 ```
 
-## Teknik Açıklama
+Bağımlılıkları yükleyin:
 
-Bu projenin teknik açıklamasını yapmadan önce şu soruyu cevaplandırmamız gerek; "Neden mimariyi böyle bir şey yaptım?". Neden, çünkü;
+```bash
+bun install
+```
 
-- Auth, session handling ve CMS sistemleriyle uğraşmak istemedim.
-- Projenin yapısını büyütmek istemedim.
-- İhtiyacım kadar olan teknik borç çıkartmaya çalıştım.
+`.env` dosyasını oluşturun:
 
-Sorunun cevabını verdiysek devam edelim. Bu projeni en temeldeki kaynağı "Link" içinde güvenlik amacıyla kendi kendini doğrulayan bir signature (imza) barındırır. Bu imza kullanıcının belirlediği bir PIN ile SHA256-HMAC kullanarak oluşturulur.
+```env
+DATABASE_URL="postgresql://..."
+NUXT_DEFAULT_SIGNATURE_PIN="123456"
+```
 
-İmzalama bir zincir halinde gerçekleşir. Başta hiçbir şeyi olmayan sistem varsayılan bir PIN ile gelir, bu PIN sayesinde ilk kaynağını elde ettikten sonra oluşturulucak yeni kaynaklar ancak kullanıcının önceki kaynaklardan birinin imzasını doğrulamasıyla oluşturulabilir.
+Veritabanı migration'larını çalıştırın:
 
-Bu sistemin mevcut PIN'i unutmaması için en az 1 geçerli imza bulundurması gerekir, bu yüzden son kaynak silinse dahi sistem bunu kullanıcıya göstermez.
+```bash
+bun prisma migrate deploy
+```
 
-Bu mimari tercihin iyi yanları;
+Geliştirme sunucusunu başlatın:
 
-- Hafif olması, doğrulama ve kaynak oluşturmak için çok az adım gerektirmesi.
-- Kolay bir şekilde güvenli olması.
-- Stateless olması.
+```bash
+bun dev
+```
 
-Bu mimari tercihin kötü yanları;
+---
 
-- Her kaynağın kendi kendini doğrulaması sebebiyle veritabanından doğrudan bir düzenleme yapamazsınız. Kaynağın verilerinden birisinin değişmesi halinde imza doğrulanamaz ve bu sebepten dolayı kaynak ile ilgili işlemler sonsuza kadar kitlenir.
-- Sistemde bir PIN değişikliğine gidileceği zaman her kaynağın kendi imzasının yeniden oluşturulması gerekir.
+## 📦 Ortam Değişkenleri
+
+| Değişken                     | Zorunlu | Açıklama                                         |
+| ---------------------------- | ------- | ------------------------------------------------ |
+| `DATABASE_URL`               | Evet    | PostgreSQL bağlantı adresi                       |
+| `NUXT_DEFAULT_SIGNATURE_PIN` | Evet    | İlk kurulum sırasında kullanılan başlangıç PIN'i |
+
+---
+
+## 📄 Lisans
+
+AGPLv3

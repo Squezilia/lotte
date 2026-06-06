@@ -9,7 +9,6 @@
     "database:generate": "bunx prisma generate",
     "database:push": "bunx prisma db push",
     "database:pull": "bunx prisma db pull",
-    "postinstall": "bun database:generate && bun database:push",
     "lint": "eslint"
   },
   "dependencies": {
