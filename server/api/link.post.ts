@@ -26,7 +26,7 @@ export default defineEventHandler({
     if ((await prisma.links.count()) + 1 > 255)
       throw createError({
         statusCode: 400,
-        statusMessage: 'Maksimum 255 Adet Bağlantı Kullanılabilir.',
+        message: 'Maksimum 255 Adet Bağlantı Kullanılabilir.',
       });
 
     const firstItem = await prisma.links.findFirst();
@@ -34,7 +34,7 @@ export default defineEventHandler({
     if (!verifySignature(result.data.pin, firstItem))
       throw createError({
         statusCode: 401,
-        statusMessage: 'Geçersiz PIN',
+        message: 'Geçersiz PIN',
       });
 
     return await prisma.$transaction(async (tx) => {

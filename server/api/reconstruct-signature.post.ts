@@ -28,7 +28,7 @@ export default defineEventHandler({
     if (!verifySignature(result.data.pin, firstItem))
       throw createError({
         statusCode: 401,
-        statusMessage: 'Geçersiz PIN',
+        message: 'Geçersiz PIN',
       });
 
     if (!firstItem) {
@@ -50,7 +50,6 @@ export default defineEventHandler({
 
       return {
         status: 200,
-        statusMessage: 'OK',
         message: 'PIN Değiştirildi',
       };
     }
@@ -84,7 +83,6 @@ export default defineEventHandler({
 
     return {
       status: 200,
-      statusMessage: 'OK',
       message: 'PIN Değiştirildi',
     };
   },

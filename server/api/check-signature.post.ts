@@ -22,12 +22,11 @@ export default defineEventHandler({
     if (!verifySignature(result.data.pin, firstItem))
       throw createError({
         statusCode: 401,
-        statusMessage: 'Geçersiz PIN',
+        message: 'Geçersiz PIN',
       });
 
     return {
       status: 200,
-      statusMessage: 'OK',
       message: 'Geçerli PIN',
     };
   },

@@ -17,7 +17,7 @@ const forwarded = useForwardProps(delegatedProps);
     v-bind="forwarded"
     :class="
       cn(
-        'text-xl h-11 w-9 group-data-[input-error=true]/otp:border-destructive',
+        'text-xl h-11 w-9 group-data-[input-error=true]/otp:border-destructive border-x rounded-lg',
         props.class
       )
     "

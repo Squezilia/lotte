@@ -28,13 +28,13 @@ export default defineEventHandler({
     if (!targetLink)
       throw createError({
         statusCode: 400,
-        statusMessage: 'Bağlantı Bulunamadı.',
+        message: 'Bağlantı Bulunamadı.',
       });
 
     if (!verifySignature(result.data.pin, targetLink))
       throw createError({
         statusCode: 401,
-        statusMessage: 'Geçersiz PIN',
+        message: 'Geçersiz PIN',
       });
 
     const linksCount = await prisma.links.count();
