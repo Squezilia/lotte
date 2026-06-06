@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { verifySignature } from '~~/shared/signature';
+import { verifySignature } from '../utils/signature';
+import { saveTry } from '../utils/saveTry';
 
 const zodSchema = z.object({
   id: z.string(),
@@ -31,11 +32,13 @@ export default defineEventHandler({
         message: 'Bağlantı Bulunamadı.',
       });
 
-    if (!verifySignature(result.data.pin, targetLink))
+    if (!verifySignature(result.data.pin, targetLink)) {
+      await saveTry(event);
       throw createError({
         statusCode: 401,
         message: 'Geçersiz PIN',
       });
+    }
 
     const linksCount = await prisma.links.count();
     if (linksCount === 1) {

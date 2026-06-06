@@ -1,3 +1,5 @@
+import { toast } from 'vue-sonner';
+
 export const useLinks = () => {
   const editState = useState('edit:enabled', () => false);
   const editPIN = useState<null | string>('edit:pin', () => null);
@@ -15,6 +17,9 @@ export const useLinks = () => {
         method: 'POST',
         body: {
           pin: pin || editPIN.value,
+        },
+        onResponseError(ctx) {
+          toast.error(ctx.response._data?.message || 'PIN Doğrulanamadı.');
         },
       });
     },

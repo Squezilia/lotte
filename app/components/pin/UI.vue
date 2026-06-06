@@ -60,10 +60,10 @@ onUnmounted(() => {
       opacity: 0,
     }"
     :transition="{
-      duration: 0.1,
+      duration: 0.3,
       ease: [0.33, 1, 0.68, 1],
     }"
-    class="fixed z-20 top-0 left-0 w-screen h-screen bg-background/20 flex flex-col backdrop-blur-xs pt-40 items-center"
+    class="fixed z-20 top-0 left-0 w-screen h-screen bg-background/20 flex flex-col backdrop-blur-sm pt-40 items-center"
   >
     <motion.div
       :initial="{ top: 80, opacity: 0, scale: 0.95 }"

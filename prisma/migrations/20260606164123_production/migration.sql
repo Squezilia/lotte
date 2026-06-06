@@ -13,3 +13,12 @@ CREATE TABLE "Links" (
 
     CONSTRAINT "Links_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "Tries" (
+    "ip" TEXT NOT NULL,
+    "count" INTEGER NOT NULL,
+    "lastTry" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Tries_pkey" PRIMARY KEY ("ip")
+);

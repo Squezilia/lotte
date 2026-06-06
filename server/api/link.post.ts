@@ -1,5 +1,6 @@
 import { z } from 'zod';
-import { verifySignature, generateSignature } from '~~/shared/signature';
+import { generateSignature, verifySignature } from '../utils/signature';
+import { saveTry } from '../utils/saveTry';
 
 const zodSchema = z.object({
   type: z.enum(['URL', 'PHONE']),
@@ -31,11 +32,13 @@ export default defineEventHandler({
 
     const firstItem = await prisma.links.findFirst();
 
-    if (!verifySignature(result.data.pin, firstItem))
+    if (!verifySignature(result.data.pin, firstItem)) {
+      await saveTry(event);
       throw createError({
         statusCode: 401,
         message: 'Geçersiz PIN',
       });
+    }
 
     return await prisma.$transaction(async (tx) => {
       if (firstItem?.purged) {

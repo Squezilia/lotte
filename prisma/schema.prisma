@@ -29,3 +29,9 @@ model Links {
   signature   String
   purged      Boolean @default(false)
 }
+
+model Tries {
+  ip      String   @id
+  count   Int
+  lastTry DateTime @default(now())
+}
