@@ -91,6 +91,9 @@ function onDragTransitionEnd() {
         :src="image"
         :alt="title"
         :placeholder="[50, 25, 75, 5]"
+        :quality="85"
+        fit="inside"
+        format="webp"
       />
       <div class="flex flex-col">
         <span class="font-semibold">{{ title }}</span>

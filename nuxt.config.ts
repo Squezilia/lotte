@@ -23,4 +23,13 @@ export default defineNuxtConfig({
       }),
     ],
   },
+
+  image: {
+    domains: [
+      'lh3.googleusercontent.com',
+      'storage.googleapis.com',
+      'www.google.com',
+      'google.com',
+    ],
+  },
 });

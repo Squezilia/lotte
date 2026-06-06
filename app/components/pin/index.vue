@@ -10,10 +10,12 @@ const lockOpacity = useTransform(props.y, [0, 75], [0, 1]);
 </script>
 
 <template>
-  <motion.div
-    :style="{ opacity: lockOpacity }"
-    class="absolute z-0 top-0 left-0 flex pt-8 justify-center h-100 w-screen bg-emerald-600"
-  >
-    <LockOpen />
-  </motion.div>
+  <ClientOnly>
+    <motion.div
+      :style="{ opacity: lockOpacity }"
+      class="absolute z-0 top-0 left-0 flex pt-8 justify-center h-100 w-screen bg-emerald-600"
+    >
+      <LockOpen />
+    </motion.div>
+  </ClientOnly>
 </template>
