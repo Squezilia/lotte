@@ -8,8 +8,6 @@ Lotte basit bir fikir üzerine kuruldu:
 
 Bu yüzden hesap sistemi, oturum (session), JWT veya OAuth yerine 6 haneli bir ana PIN ile çalışan imza (signature) tabanlı bir doğrulama mekanizması kullanır.
 
----
-
 ## ✨ Özellikler
 
 - Minimal ve mobil odaklı arayüz
@@ -18,8 +16,6 @@ Bu yüzden hesap sistemi, oturum (session), JWT veya OAuth yerine 6 haneli bir a
 - Bağlantı yönetimi
 - İmza tabanlı içerik doğrulama
 - Vercel, Netlify ve Cloudflare üzerinde çalıştırılabilir
-
----
 
 ## ✅ Ne Yapar / ❌ Ne Yapmaz
 
@@ -38,8 +34,6 @@ Bu yüzden hesap sistemi, oturum (session), JWT veya OAuth yerine 6 haneli bir a
 - Session, JWT veya OAuth kullanmaz.
 - Rol ve yetki yönetimi sunmaz.
 - Yönetim paneli veya kapsamlı bir CMS olmayı hedeflemez.
-
----
 
 ## 🔐 Güvenlik Modeli
 
@@ -61,8 +55,6 @@ Bir kayıt güncellenirken veya silinirken:
 
 Bu sayede herhangi bir oturum veya kullanıcı bilgisi saklanmadan içerik sahipliği doğrulanabilir.
 
----
-
 ## ⚠ Özel Durumlar
 
 ### Boş Veritabanı
@@ -76,8 +68,6 @@ Bu sayede herhangi bir oturum veya kullanıcı bilgisi saklanmadan içerik sahip
 İmza zincirinin korunabilmesi için sistem veritabanında her zaman görünmeyen dahili bir kayıt tutar.
 
 Bu kayıt API üzerinden erişilebilir değildir ve yeni bir kayıt oluşturulana dek imza zincirini korumak için devam eder.
-
----
 
 ## 🚀 Kurulum
 
@@ -114,16 +104,12 @@ Geliştirme sunucusunu başlatın:
 bun dev
 ```
 
----
-
 ## 📦 Ortam Değişkenleri
 
 | Değişken                     | Zorunlu | Açıklama                                         |
 | ---------------------------- | ------- | ------------------------------------------------ |
 | `DATABASE_URL`               | Evet    | PostgreSQL bağlantı adresi                       |
 | `NUXT_DEFAULT_SIGNATURE_PIN` | Evet    | İlk kurulum sırasında kullanılan başlangıç PIN'i |
-
----
 
 ## 📄 Lisans
 
