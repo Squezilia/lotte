@@ -35,40 +35,6 @@ Bu yüzden hesap sistemi, oturum (session), JWT veya OAuth yerine 6 haneli bir a
 - Rol ve yetki yönetimi sunmaz.
 - Yönetim paneli veya kapsamlı bir CMS olmayı hedeflemez.
 
-## 🔐 Güvenlik Modeli
-
-Lotte geleneksel bir kimlik doğrulama sistemi kullanmaz.
-
-Her kurulumda kaynakları doğrulamak amacıyla **6 haneli bir Master PIN** kullanılır.
-
-Veritabanında saklanan her kayıt, HMAC-SHA256 algoritması ile imzalanır.
-
-- **Anahtar (Key):** Master PIN
-- **Mesaj (Message):** Kaynağın içeriği
-
-Bir kayıt güncellenirken veya silinirken:
-
-1. İstemci mevcut PIN'i gönderir.
-2. Sunucu kayıt üzerindeki imzayı doğrular.
-3. Doğrulama başarılıysa işlem gerçekleştirilir.
-4. Güncellenen içerik için yeni bir imza oluşturulur.
-
-Bu sayede herhangi bir oturum veya kullanıcı bilgisi saklanmadan içerik sahipliği doğrulanabilir.
-
-## ⚠ Özel Durumlar
-
-### Boş Veritabanı
-
-İlk kurulumda doğrulanabilecek herhangi bir kayıt bulunmadığından, `NUXT_DEFAULT_SIGNATURE_PIN` değişkeni başlangıç PIN'i olarak kullanılır.
-
-İlk kayıt oluşturulduktan sonra bu PIN artık kullanılmaz.
-
-### Son Kaydın Silinmesi
-
-İmza zincirinin korunabilmesi için sistem veritabanında her zaman görünmeyen dahili bir kayıt tutar.
-
-Bu kayıt API üzerinden erişilebilir değildir ve yeni bir kayıt oluşturulana dek imza zincirini korumak için devam eder.
-
 ## 🚀 Kurulum
 
 Projeyi klonlayın:
@@ -103,6 +69,40 @@ Geliştirme sunucusunu başlatın:
 ```bash
 bun dev
 ```
+
+## 🔐 Güvenlik Modeli
+
+Lotte geleneksel bir kimlik doğrulama sistemi kullanmaz.
+
+Her kurulumda kaynakları doğrulamak amacıyla **6 haneli bir Master PIN** kullanılır.
+
+Veritabanında saklanan her kayıt, HMAC-SHA256 algoritması ile imzalanır.
+
+- **Anahtar (Key):** Master PIN
+- **Mesaj (Message):** Kaynağın içeriği
+
+Bir kayıt güncellenirken veya silinirken:
+
+1. İstemci mevcut PIN'i gönderir.
+2. Sunucu kayıt üzerindeki imzayı doğrular.
+3. Doğrulama başarılıysa işlem gerçekleştirilir.
+4. Güncellenen içerik için yeni bir imza oluşturulur.
+
+Bu sayede herhangi bir oturum veya kullanıcı bilgisi saklanmadan içerik sahipliği doğrulanabilir.
+
+## ⚠ Özel Durumlar
+
+### Boş Veritabanı
+
+İlk kurulumda doğrulanabilecek herhangi bir kayıt bulunmadığından, `NUXT_DEFAULT_SIGNATURE_PIN` değişkeni başlangıç PIN'i olarak kullanılır.
+
+İlk kayıt oluşturulduktan sonra bu PIN artık kullanılmaz.
+
+### Son Kaydın Silinmesi
+
+İmza zincirinin korunabilmesi için sistem veritabanında her zaman görünmeyen dahili bir kayıt tutar.
+
+Bu kayıt API üzerinden erişilebilir değildir ve yeni bir kayıt oluşturulana dek imza zincirini korumak için devam eder.
 
 ## 📦 Ortam Değişkenleri
 
